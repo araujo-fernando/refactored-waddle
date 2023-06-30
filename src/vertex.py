@@ -1,10 +1,10 @@
 
 class Vertex:
-    def __init__(self, id: int, x_coord: float, y_coord: float, g_max: int):
+    def __init__(self, id: int, x_coord: float, y_coord: float, max_degree: int):
         self.id = id
         self.x_coord = x_coord
         self.y_coord = y_coord
-        self.g_max = g_max
+        self.max_degree = max_degree
 
     def __eq__(self, other) -> bool:
         return self.id == other.id

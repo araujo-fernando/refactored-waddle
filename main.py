@@ -3,7 +3,7 @@ import os
 from argparse import ArgumentParser
 from src import *
 
-def main(file: str, algorithms):
+def main(file: str, algorithms: list[str]):
     graph = CompleteUndirectedGraph(create_vertexes_from_file(file))
 
     print("Graph data")
@@ -18,7 +18,7 @@ def main(file: str, algorithms):
 def parse_arguments():
     parser = ArgumentParser()
     parser.add_argument("file", help="File for the graph instance")
-    parser.add_argument("algorithm", help="Algorithm to use: Kruskall, Prim, All", choices=["kruskal", "prim", "all"], default="")
+    parser.add_argument("algorithm", help="Algorithm to use: Kruskall, Prim, All", choices=["kruskal", "prim", "ning_xiong", "all"], default="")
     return parser
 
 if __name__ == "__main__":
@@ -28,6 +28,8 @@ if __name__ == "__main__":
     if not os.path.isdir("logs"):
         os.mkdir("logs")
     if args.algorithm == "all":
-        args.algorithm = ["kruskal", "prim"]
+        args.algorithm = ["kruskal", "prim", "ning_xiong"]
+    else:
+        args.algorithm = [args.algorithm]
 
     main(args.file, args.algorithm)
