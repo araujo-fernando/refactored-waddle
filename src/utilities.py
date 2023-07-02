@@ -30,18 +30,21 @@ def create_logger(log_file: str, stdout: bool = True):
     logger.addHandler(fh)
     return logger
 
-def print_results(tree: list, algorithm: str):
-    vertexes_degrees = compute_vertexes_degrees(tree)
+def print_results(tree, algorithm: str, exec_time: float):
+    vertexes_degrees = dict()
+    for v in tree.V:
+        vertexes_degrees[v] = len(tree.find_vertexes_connected_to_vertex(v))
 
     logger = create_logger(f"logs/{algorithm}_summary.log")
     logger.info(f"Minimum spanning tree by {algorithm.capitalize()}")
-    logger.info(f"Total edges: {len(tree)}")
-    logger.info(f"Total weight: {round(sum((w for _, _, w in tree)), 4)}")
+    logger.info(f"Total edges: {len(tree.edges)}")
+    logger.info(f"Total weight: {round(sum((w for _, _, w in tree.edges)), 4)}")
     logger.info(f"Max node degree: {max(vertexes_degrees.values())}")
+    logger.info(f"Execution time: {round(exec_time, 4)} seconds")
     print("")
 
     logger = create_logger(f"logs/{algorithm}_tree.log", False)
-    print_forest(tree, logger)
+    print_forest(tree.edges, logger)
 
     logger = create_logger(f"logs/{algorithm}_vertexes_degrees.log", False)
     print_vertexes_degrees(vertexes_degrees, logger)
@@ -126,29 +129,6 @@ def find_closest_vertex_to_subset(vertexes: Iterable[Vertex], subset: set[Vertex
         raise ValueError("No closest vertex found")
 
     return closest_vertexes
-
-def compute_vertexes_degrees(edges: Iterable) -> dict:
-    """
-    Compute the degree of each vertex in the graph
-
-    :param edges: list of edges
-    :type edges: list
-    :return: dictionary with the degree of each vertex
-    :rtype: dict
-    """
-    vertexes_degrees = {}
-    for u, v, _ in edges:
-        if u in vertexes_degrees:
-            vertexes_degrees[u] += 1
-        else:
-            vertexes_degrees[u] = 1
-
-        if v in vertexes_degrees:
-            vertexes_degrees[v] += 1
-        else:
-            vertexes_degrees[v] = 1
-
-    return vertexes_degrees
 
 def print_vertexes_degrees(vertexes_degrees: dict, logger: logging.Logger | None = None):
     vertexes_degrees = {k: v for k, v in sorted(vertexes_degrees.items(), key=lambda item: item[0].id)}

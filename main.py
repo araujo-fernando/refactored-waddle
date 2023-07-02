@@ -1,7 +1,10 @@
 import os
 
+from time import time
 from argparse import ArgumentParser
 from src import *
+
+ALL_ALGORITHMS = ["kruskal", "prim", "ning_xiong", "custom"]
 
 def main(file: str, algorithms: list[str]):
     graph = CompleteUndirectedGraph(create_vertexes_from_file(file))
@@ -11,14 +14,16 @@ def main(file: str, algorithms: list[str]):
     print("Total edges:", len(graph.edges), "\n")
     
     for alg in algorithms:
+        start_time = time()
         tree = eval(alg)(graph)
-        print_results(tree, alg)
+        exec_time = time() - start_time
+        print_results(tree, alg, exec_time)
 
 
 def parse_arguments():
     parser = ArgumentParser()
     parser.add_argument("file", help="File for the graph instance")
-    parser.add_argument("algorithm", help="Algorithm to use: Kruskall, Prim, All", choices=["kruskal", "prim", "ning_xiong", "all"], default="")
+    parser.add_argument("algorithm", help="Algorithm to use: Kruskall, Prim, All", choices=ALL_ALGORITHMS+["all"], default="")
     return parser
 
 if __name__ == "__main__":
@@ -28,7 +33,7 @@ if __name__ == "__main__":
     if not os.path.isdir("logs"):
         os.mkdir("logs")
     if args.algorithm == "all":
-        args.algorithm = ["kruskal", "prim", "ning_xiong"]
+        args.algorithm = ALL_ALGORITHMS
     else:
         args.algorithm = [args.algorithm]
 

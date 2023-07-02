@@ -1,3 +1,5 @@
+import networkx as nx
+
 from typing import List, NamedTuple
 
 from .utilities import *
@@ -16,7 +18,10 @@ class UndirectedGraph:
 
     @property
     def is_connected(self) -> bool:
-        return len(self.find_vertexes_connected_to_vertex(self.V[0])) == len(self.V) - 1
+        aux_graph = nx.Graph()
+        for edge in self.edges:
+            aux_graph.add_edge(edge.u, edge.v)
+        return nx.is_connected(aux_graph)
 
     def copy(self):
         copy = self.__new__(UndirectedGraph)
@@ -25,6 +30,9 @@ class UndirectedGraph:
 
         return copy
     
+    def add_edges(self, edges: list[list]):
+        self.edges = [Edge(u, v, w) for u, v, w in edges]
+
     def find_vertexes_with_degree(self, degree: int):
         vertex_degrees = {v: 0 for v in self.V}
         for edge in self.edges:
@@ -34,7 +42,7 @@ class UndirectedGraph:
         return [v for v in vertex_degrees if vertex_degrees[v] == degree]
     
     def find_egdes_of_vertex(self, vertex: Vertex):
-        return [e for e in self.edges if vertex in e]
+        return [e for e in self.edges if vertex == e.u or vertex == e.v]
 
     def find_vertexes_connected_to_vertex(self, vertex: Vertex) -> set[Vertex]:
         vertexes = set()
